@@ -1,8 +1,8 @@
 # Hys Cute
-An operating system made by me. I love song thats why I named it this way.
+An operating system made by me. I love song thats why I named it this way.\n
 *Currently on very early stages of the OS, things might change drastically.*
 ## Current status
-Current release: 0.1
+Current release: 0.1 \n
 Only has booting right now. Will grow soon.
 It targets only x86_64. Maybe ARM or RISC-V in the future.
 

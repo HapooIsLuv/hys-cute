@@ -179,6 +179,7 @@ enable_paging:
   ret
 
 .code64
+.extern kmain
 lm_start:
   mov $0, %ax
   mov %ax, %ss
@@ -189,4 +190,7 @@ lm_start:
 
   mov $0x2f592f412f4b2f4f, %rax
   mov %rax, VGA_BUF
+
+  call kmain
+
   hlt

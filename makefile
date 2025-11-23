@@ -5,6 +5,7 @@ iso := build/hys-cute-$(arch).iso
 arch_dir := src/arch/$(arch)
 
 linker_script := $(arch_dir)/linker.ld
+linker_flags := -T $(linker_script) -z noexecstack
 grub_cfg := $(arch_dir)/grub.cfg
 asm_src = $(wildcard $(arch_dir)/*.asm)
 asm_obj = $(patsubst $(arch_dir)/%.asm, build/arch/$(arch)/%.o, $(asm_src))
@@ -15,7 +16,7 @@ all: $(kernel)
 
 clean:
 	@rm -r build
-	@rm -r target
+	@cargo clean
 
 run: $(iso)
 	@qemu-system-x86_64 -cdrom $(iso)
@@ -29,9 +30,11 @@ $(iso): $(kernel) $(grub_cfg)
 	@grub-mkrescue -o $(iso) build/isofiles
 	@rm -r build/isofiles
 
+rust_kernel = target/hys-os-$(arch)/release/libhys_os.a
 $(kernel) : $(linker_script) $(asm_obj)
-	@echo "Making $(arch)"
-	@x86_64-elf-ld -n -T $(linker_script) -o $(kernel) $(asm_obj)
+	@echo "Making $(arch) kernel"
+	@cargo build --release
+	@x86_64-elf-ld -n $(linker_flags) -o $(kernel) $(asm_obj) $(rust_kernel)
 
 build/arch/$(arch)/%.o: $(arch_dir)/%.asm
 	@mkdir -p $(shell dirname $@)
