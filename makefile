@@ -2,7 +2,7 @@ arch ?= x86_64
 kernel := build/hys-kernel-$(arch).bin
 iso := build/hys-cute-$(arch).iso
 
-arch_dir := arch/$(arch)
+arch_dir := src/arch/$(arch)
 
 linker_script := $(arch_dir)/linker.ld
 grub_cfg := $(arch_dir)/grub.cfg
@@ -15,6 +15,7 @@ all: $(kernel)
 
 clean:
 	@rm -r build
+	@rm -r target
 
 run: $(iso)
 	@qemu-system-x86_64 -cdrom $(iso)
