@@ -1,5 +1,6 @@
 #[repr(u8)]
-pub enum VgaColor {
+#[derive(Clone, Copy)]
+pub enum VgaColors {
     BLACK = 0,
     BLUE = 1,
     GREEN = 2,
@@ -18,10 +19,51 @@ pub enum VgaColor {
     WHITE = 15,
 }
 
-pub const fn vga_entry_color(fg: VgaColor, bg: VgaColor) -> u8 {
-    fg as u8 | (bg as u8) << 4
+#[derive(Clone, Copy)]
+pub struct VgaColor {
+    foreground: VgaColors,
+    background: VgaColors,
 }
 
-pub const fn vga_entry(character: char, color: u8) -> u16 {
-    character as u16 | (color as u16) << 8
+#[derive(Clone, Copy)]
+pub struct VgaEntry {
+    color: VgaColor,
+    char: char,
+}
+
+impl VgaColor {
+    pub fn new(fg: VgaColors, bg: VgaColors) -> Self {
+        VgaColor {
+            foreground: fg,
+            background: bg,
+        }
+    }
+}
+
+impl Into<u8> for VgaColor {
+    fn into(self) -> u8 {
+        self.foreground as u8 | (self.background as u8) << 4
+    }
+}
+
+impl Into<u16> for VgaColor {
+    fn into(self) -> u16 {
+        // since u8 already have a conversion to u16, I'll just do that
+        <VgaColor as Into<u8>>::into(self) as u16
+    }
+}
+
+impl VgaEntry {
+    pub fn new(vga_color: VgaColor, char: char) -> Self {
+        VgaEntry {
+            color: vga_color,
+            char,
+        }
+    }
+}
+
+impl Into<u16> for VgaEntry {
+    fn into(self) -> u16 {
+        self.char as u16 | (<VgaColor as Into<u16>>::into(self.color)) << 8
+    }
 }

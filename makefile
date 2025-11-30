@@ -14,9 +14,13 @@ asm_obj = $(patsubst $(arch_dir)/%.asm, build/arch/$(arch)/%.o, $(asm_src))
 
 all: $(kernel)
 
-clean:
+# This is for C and Asm
+clean-builddir:
 	@rm -r build
-	@cargo clean
+
+# This is for Rust src.
+clean-target:
+  @cargo clean
 
 run: $(iso)
 	@qemu-system-x86_64 -cdrom $(iso)
